@@ -1,16 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace WinFormsApp2
@@ -26,38 +20,25 @@ namespace WinFormsApp2
             InitializeComponent();
             originPictureAngle_tbx.Text = "0";  // 默认当前图片的旋转角度为0°
             deltaAngle_tbx.Text = "1";   // 默认每次增加1°;
-            finalPictureAngle_tbx.Text = "180";  // 默认最后一张图片的旋转调度为180°;
-
-            //    // 初始化图片
-            //for (int i = 1; i <= 360; i++)
-            //{
-            //    PictureBox pictureBox = new PictureBox();
-            //    pictureBox.Image = (System.Drawing.Bitmap)(Properties.Resources.ResourceManager.GetObject($"_{i}"));
-            //    pictureBox.Size = new Size(80, 80);
-            //    pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
-            //    flowLayoutPanel1.Controls.Add(pictureBox);
-            //}
-
+            finalPictureAngle_tbx.Text = "360";  // 默认最后一张图片的旋转调度为180°;
         }
         /// <summary>
         /// 点击显示当前剪切板中的图片
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void pictureBox1_Click(object sender, EventArgs e)
+        private void PictureBox1_Click(object sender, EventArgs e)
         {
             originPicture = GetClipBoardImage();
             pictureBox1.Image = originPicture;
         }
 
-
         #region 按指定角度生成旋转后的图片
-        private void create_btn_Click(object sender, EventArgs e)
+        private void Create_btn_Click(object sender, EventArgs e)
         {
             float currentAngle = originAngle;
             while (currentAngle < finalAngle)
             {
-                currentAngle += deltaAngle;
                 Image newImage = KiRotate((Bitmap)originPicture, currentAngle, Color.Transparent);
                 pictureBox1.Image = newImage;
                 newImage.Save($"_{currentAngle}.png", System.Drawing.Imaging.ImageFormat.Png);
@@ -68,6 +49,7 @@ namespace WinFormsApp2
                     SizeMode = PictureBoxSizeMode.StretchImage
                 };
                 flowLayoutPanel1.Controls.Add(pictureBox);
+                currentAngle += deltaAngle;
             }
         }
         #region 图片任意角度旋转
@@ -128,9 +110,9 @@ namespace WinFormsApp2
         /// <param name="rawImg"></param>
         /// <param name="angle"></param>
         /// <returns></returns>
-        public Image GetRotateImage(Image srcImage, int angle)
+        public static Image GetRotateImage(Image srcImage, int angle)
         {
-            angle = angle % 360;
+            angle %= 360;
             //原图的宽和高
             int srcWidth = srcImage.Width;
             int srcHeight = srcImage.Height;
@@ -187,14 +169,14 @@ namespace WinFormsApp2
         /// <param name="height">原矩形高</param>
         /// <param name="angle">顺时针旋转角度</param>
         /// <returns></returns>
-        public Rectangle GetRotateRectangle(int width, int height, float angle)
+        public static Rectangle GetRotateRectangle(int width, int height, float angle)
         {
             double radian = angle * Math.PI / 180; ;
             double cos = Math.Cos(radian);
             double sin = Math.Sin(radian);
             //只需要考虑到第四象限和第三象限的情况取大值(中间用绝对值就可以包括第一和第二象限)
-            int newWidth = (int)(Math.Max(Math.Abs(width * cos - height * sin), Math.Abs(width * cos + height * sin)));
-            int newHeight = (int)(Math.Max(Math.Abs(width * sin - height * cos), Math.Abs(width * sin + height * cos)));
+            int newWidth = Convert.ToInt32(Math.Max(Math.Abs(width * cos - height * sin), Math.Abs(width * cos + height * sin)));
+            int newHeight = Convert.ToInt32(Math.Max(Math.Abs(width * sin - height * cos), Math.Abs(width * sin + height * cos)));
             return new Rectangle(0, 0, newWidth, newHeight);
         }
         #endregion
@@ -205,7 +187,7 @@ namespace WinFormsApp2
         /// <summary>
         /// 获取剪切板中的图片
         /// </summary>
-        private Image GetClipBoardImage()
+        private static Image GetClipBoardImage()
         {
             Image image = null;
             IDataObject iData = Clipboard.GetDataObject();
@@ -223,7 +205,7 @@ namespace WinFormsApp2
 
             else if (iData.GetDataPresent(DataFormats.Text))
             {
-                var path = (String)iData.GetData(DataFormats.Text);
+                var path = iData.GetData(DataFormats.Text) as string;
                 var chars = Path.GetInvalidPathChars();
                 if (path.IndexOfAny(chars) >= 0)
                 {
@@ -232,7 +214,6 @@ namespace WinFormsApp2
                 }
                 if (System.IO.File.Exists(path))
                 {
-                    var name = Path.GetFileNameWithoutExtension(path);
                     var extension = path.Substring(path.LastIndexOf("."));
                     string imgType = ".png|.jpg|.jpeg";
                     if (imgType.Contains(extension.ToLower()))
@@ -253,22 +234,24 @@ namespace WinFormsApp2
         }
         #endregion
 
+        #region 修改参数
 
-
-        private void currentPictureAngle_tbx_TextChanged(object sender, EventArgs e)
+        private void CurrentPictureAngle_tbx_TextChanged(object sender, EventArgs e)
         {
             originAngle = float.Parse(originPictureAngle_tbx.Text);
         }
 
-        private void deltaAngle_TextChanged(object sender, EventArgs e)
+        private void DeltaAngle_TextChanged(object sender, EventArgs e)
         {
             deltaAngle = float.Parse(deltaAngle_tbx.Text);
         }
 
-        private void lastPictureAngle_tbx_TextChanged(object sender, EventArgs e)
+        private void LastPictureAngle_tbx_TextChanged(object sender, EventArgs e)
         {
             finalAngle = float.Parse(finalPictureAngle_tbx.Text);
         }
+        #endregion
+
         #region 打开文件位置
 
         private void OpenFileLocation_Click(object sender, EventArgs e)
@@ -284,12 +267,12 @@ namespace WinFormsApp2
 
         #region 播放旋转图片
         int index = 0;
-        private void playRotatePics_btn_Click(object sender, EventArgs e)
+        private void PlayRotatePics_btn_Click(object sender, EventArgs e)
         {
             timer1.Start();
             timer1.Interval = 10;
         }
-        private void timer1_Tick(object sender, EventArgs e)
+        private void Timer1_Tick(object sender, EventArgs e)
         {
             playPics_picb.Image = (flowLayoutPanel1.Controls[index] as PictureBox).Image;
             if (index < flowLayoutPanel1.Controls.Count - 1)

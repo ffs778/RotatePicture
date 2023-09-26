@@ -60,7 +60,7 @@ namespace WinFormsApp2
             this.create_btn.TabIndex = 1;
             this.create_btn.Text = "生成旋转后图片";
             this.create_btn.UseVisualStyleBackColor = true;
-            this.create_btn.Click += new System.EventHandler(this.create_btn_Click);
+            this.create_btn.Click += new System.EventHandler(this.Create_btn_Click);
             // 
             // label1
             // 
@@ -77,7 +77,7 @@ namespace WinFormsApp2
             this.originPictureAngle_tbx.Name = "originPictureAngle_tbx";
             this.originPictureAngle_tbx.Size = new System.Drawing.Size(86, 23);
             this.originPictureAngle_tbx.TabIndex = 6;
-            this.originPictureAngle_tbx.TextChanged += new System.EventHandler(this.currentPictureAngle_tbx_TextChanged);
+            this.originPictureAngle_tbx.TextChanged += new System.EventHandler(this.CurrentPictureAngle_tbx_TextChanged);
             // 
             // label2
             // 
@@ -98,11 +98,11 @@ namespace WinFormsApp2
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.pictureBox1.TabIndex = 12;
             this.pictureBox1.TabStop = false;
-            this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
+            this.pictureBox1.Click += new System.EventHandler(this.PictureBox1_Click);
             // 
             // timer1
             // 
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            this.timer1.Tick += new System.EventHandler(this.Timer1_Tick);
             // 
             // groupBox1
             // 
@@ -136,7 +136,7 @@ namespace WinFormsApp2
             this.finalPictureAngle_tbx.Name = "finalPictureAngle_tbx";
             this.finalPictureAngle_tbx.Size = new System.Drawing.Size(86, 23);
             this.finalPictureAngle_tbx.TabIndex = 16;
-            this.finalPictureAngle_tbx.TextChanged += new System.EventHandler(this.lastPictureAngle_tbx_TextChanged);
+            this.finalPictureAngle_tbx.TextChanged += new System.EventHandler(this.LastPictureAngle_tbx_TextChanged);
             // 
             // label3
             // 
@@ -153,7 +153,7 @@ namespace WinFormsApp2
             this.deltaAngle_tbx.Name = "deltaAngle_tbx";
             this.deltaAngle_tbx.Size = new System.Drawing.Size(86, 23);
             this.deltaAngle_tbx.TabIndex = 14;
-            this.deltaAngle_tbx.TextChanged += new System.EventHandler(this.deltaAngle_TextChanged);
+            this.deltaAngle_tbx.TextChanged += new System.EventHandler(this.DeltaAngle_TextChanged);
             // 
             // groupBox2
             // 
@@ -194,7 +194,7 @@ namespace WinFormsApp2
             this.playRotatePics_btn.TabIndex = 14;
             this.playRotatePics_btn.Text = "播放";
             this.playRotatePics_btn.UseVisualStyleBackColor = true;
-            this.playRotatePics_btn.Click += new System.EventHandler(this.playRotatePics_btn_Click);
+            this.playRotatePics_btn.Click += new System.EventHandler(this.PlayRotatePics_btn_Click);
             // 
             // playPics_picb
             // 
