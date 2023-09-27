@@ -78,7 +78,7 @@ namespace RotatePicture
                 flowLayoutPanel1.Controls.Add(pictureBox);
             }
         }
-        private void SaveImage(string pictureName, Image image)
+        private static void SaveImage(string pictureName, Image image)
         {
             string fileName = PATH + $"\\_{ pictureName}.png";
             image.Save(fileName, ImageFormat.Png);  // 将当前图片保存
