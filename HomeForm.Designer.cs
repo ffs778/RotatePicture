@@ -1,7 +1,7 @@
 ﻿
-namespace WinFormsApp2
+namespace RotatePicture
 {
-    partial class Form1
+    partial class HomeForm
     {
         /// <summary>
         ///  Required designer variable.
@@ -42,6 +42,7 @@ namespace WinFormsApp2
             this.label3 = new System.Windows.Forms.Label();
             this.deltaAngle_tbx = new System.Windows.Forms.TextBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.deletePictures_btn = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.playRotatePics_btn = new System.Windows.Forms.Button();
@@ -92,7 +93,7 @@ namespace WinFormsApp2
             // pictureBox1
             // 
             this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox1.Location = new System.Drawing.Point(534, 22);
+            this.pictureBox1.Location = new System.Drawing.Point(628, 22);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(400, 400);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
@@ -157,6 +158,7 @@ namespace WinFormsApp2
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.deletePictures_btn);
             this.groupBox2.Controls.Add(this.button2);
             this.groupBox2.Controls.Add(this.flowLayoutPanel1);
             this.groupBox2.Controls.Add(this.playRotatePics_btn);
@@ -168,9 +170,19 @@ namespace WinFormsApp2
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "旋转预览";
             // 
+            // deletePictures_btn
+            // 
+            this.deletePictures_btn.Location = new System.Drawing.Point(491, 112);
+            this.deletePictures_btn.Name = "deletePictures_btn";
+            this.deletePictures_btn.Size = new System.Drawing.Size(75, 33);
+            this.deletePictures_btn.TabIndex = 17;
+            this.deletePictures_btn.Text = "清空";
+            this.deletePictures_btn.UseVisualStyleBackColor = true;
+            this.deletePictures_btn.Click += new System.EventHandler(this.DeletePictures_btn_Click);
+            // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(999, 22);
+            this.button2.Location = new System.Drawing.Point(491, 49);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(99, 35);
             this.button2.TabIndex = 16;
@@ -180,6 +192,7 @@ namespace WinFormsApp2
             // 
             // flowLayoutPanel1
             // 
+            this.flowLayoutPanel1.AutoScroll = true;
             this.flowLayoutPanel1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(54, 22);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
@@ -188,7 +201,7 @@ namespace WinFormsApp2
             // 
             // playRotatePics_btn
             // 
-            this.playRotatePics_btn.Location = new System.Drawing.Point(453, 173);
+            this.playRotatePics_btn.Location = new System.Drawing.Point(491, 170);
             this.playRotatePics_btn.Name = "playRotatePics_btn";
             this.playRotatePics_btn.Size = new System.Drawing.Size(75, 35);
             this.playRotatePics_btn.TabIndex = 14;
@@ -199,14 +212,14 @@ namespace WinFormsApp2
             // playPics_picb
             // 
             this.playPics_picb.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.playPics_picb.Location = new System.Drawing.Point(534, 22);
+            this.playPics_picb.Location = new System.Drawing.Point(628, 22);
             this.playPics_picb.Name = "playPics_picb";
             this.playPics_picb.Size = new System.Drawing.Size(400, 400);
             this.playPics_picb.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.playPics_picb.TabIndex = 13;
             this.playPics_picb.TabStop = false;
             // 
-            // Form1
+            // HomeForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -214,7 +227,7 @@ namespace WinFormsApp2
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.label2);
-            this.Name = "Form1";
+            this.Name = "HomeForm";
             this.Text = "Form1";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.groupBox1.ResumeLayout(false);
@@ -243,6 +256,7 @@ namespace WinFormsApp2
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox deltaAngle_tbx;
         private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button deletePictures_btn;
     }
 }
 

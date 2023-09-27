@@ -1,57 +1,108 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace WinFormsApp2
+namespace RotatePicture
 {
-    public partial class Form1 : Form
+    public static class Common
     {
-        Image originPicture;
-        float originAngle;
-        float deltaAngle;
-        float finalAngle;
-        public Form1()
-        {
-            InitializeComponent();
-            originPictureAngle_tbx.Text = "0";  // 默认当前图片的旋转角度为0°
-            deltaAngle_tbx.Text = "1";   // 默认每次增加1°;
-            finalPictureAngle_tbx.Text = "360";  // 默认最后一张图片的旋转调度为180°;
-        }
-        /// <summary>
-        /// 点击显示当前剪切板中的图片
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void PictureBox1_Click(object sender, EventArgs e)
-        {
-            originPicture = GetClipBoardImage();
-            pictureBox1.Image = originPicture;
-        }
+        #region 从剪切板中获得图片
 
-        #region 按指定角度生成旋转后的图片
-        private void Create_btn_Click(object sender, EventArgs e)
+        /// <summary>
+        /// 获取剪切板中的图片
+        /// </summary>
+        public static Image GetClipBoardImage()
         {
-            float currentAngle = originAngle;
-            while (currentAngle < finalAngle)
+            Image image = null;
+            IDataObject iData = Clipboard.GetDataObject();
+            if (iData.GetDataPresent(DataFormats.MetafilePict))
             {
-                Image newImage = KiRotate((Bitmap)originPicture, currentAngle, Color.Transparent);
-                pictureBox1.Image = newImage;
-                newImage.Save($"_{currentAngle}.png", System.Drawing.Imaging.ImageFormat.Png);
-                PictureBox pictureBox = new()
-                {
-                    Image = newImage,
-                    Size = new Size(80, 80),
-                    SizeMode = PictureBoxSizeMode.StretchImage
-                };
-                flowLayoutPanel1.Controls.Add(pictureBox);
-                currentAngle += deltaAngle;
+                var img = Clipboard.GetImage();
+                image = img;
             }
+            else if (iData.GetDataPresent(DataFormats.FileDrop))
+            {
+                var files = Clipboard.GetFileDropList();
+                if (files.Count == 0) { return null; }
+                image = Image.FromFile(files[0]);
+            }
+
+            else if (iData.GetDataPresent(DataFormats.Text))
+            {
+                var path = iData.GetData(DataFormats.Text) as string;
+                var chars = Path.GetInvalidPathChars();
+                if (path.IndexOfAny(chars) >= 0)
+                {
+                    MessageBox.Show("路径中包含非法字符！");
+                    return null;
+                }
+                if (System.IO.File.Exists(path))
+                {
+                    var extension = path.Substring(path.LastIndexOf("."));
+                    string imgType = ".png|.jpg|.jpeg";
+                    if (imgType.Contains(extension.ToLower()))
+                    {
+                        image = Image.FromFile(path);
+                    }
+                    else
+                    {
+                        MessageBox.Show("格式错误！");
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("文件不存在！");
+                }
+            }
+            return image;
         }
+        #endregion
+
+        #region 从文件中读取图片（流读取，不锁定文件）
+        /// <summary>
+        /// 通过FileStream 来打开文件，这样就可以实现不锁定Image文件，到时可以让多用户同时访问Image文件
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public static Bitmap ReadImageFile(string path)
+        {
+            if (!File.Exists(path))
+            {
+                return null;//文件不存在
+            }
+            FileStream fs = File.OpenRead(path); //OpenRead
+            int filelength = 0;
+            filelength = (int)fs.Length; //获得文件长度 
+            Byte[] image = new Byte[filelength]; //建立一个字节数组 
+            fs.Read(image, 0, filelength); //按字节流读取 
+            System.Drawing.Image result = System.Drawing.Image.FromStream(fs);
+            fs.Close();
+            Bitmap bit = new Bitmap(result);
+            return bit;
+        }
+        #endregion
+
+        #region 打开文件夹或文件
+        public static void OpenFile(string path)
+        {
+            var info = new ProcessStartInfo(path)
+            {
+                UseShellExecute = true,
+            };
+            Process.Start(info);    // 打开指定文件夹，选中指定文件.
+        }
+        #endregion
+
         #region 图片任意角度旋转
         /// <summary>
         /// 图片任意角度旋转
@@ -180,111 +231,52 @@ namespace WinFormsApp2
             return new Rectangle(0, 0, newWidth, newHeight);
         }
         #endregion
-        #endregion
 
-        #region 获得图片
-
-        /// <summary>
-        /// 获取剪切板中的图片
-        /// </summary>
-        private static Image GetClipBoardImage()
+        #region 删除文件夹下的全部文件
+        public static void Empty(this DirectoryInfo directoryInfo)
         {
-            Image image = null;
-            IDataObject iData = Clipboard.GetDataObject();
-            if (iData.GetDataPresent(DataFormats.MetafilePict))
-            {
-                var img = Clipboard.GetImage();
-                image = img;
-            }
-            else if (iData.GetDataPresent(DataFormats.FileDrop))
-            {
-                var files = Clipboard.GetFileDropList();
-                if (files.Count == 0) { return null; }
-                image = Image.FromFile(files[0]);
-            }
-
-            else if (iData.GetDataPresent(DataFormats.Text))
-            {
-                var path = iData.GetData(DataFormats.Text) as string;
-                var chars = Path.GetInvalidPathChars();
-                if (path.IndexOfAny(chars) >= 0)
-                {
-                    MessageBox.Show("路径中包含非法字符！");
-                    return null;
-                }
-                if (System.IO.File.Exists(path))
-                {
-                    var extension = path.Substring(path.LastIndexOf("."));
-                    string imgType = ".png|.jpg|.jpeg";
-                    if (imgType.Contains(extension.ToLower()))
-                    {
-                        image = Image.FromFile(path);
-                    }
-                    else
-                    {
-                        MessageBox.Show("格式错误！");
-                    }
-                }
-                else
-                {
-                    MessageBox.Show("文件不存在！");
-                }
-            }
-            return image;
+            foreach (System.IO.FileInfo file in directoryInfo.GetFiles()) file.Delete();    // 当前目录下的全部文件
+            foreach (System.IO.DirectoryInfo subDirectory in directoryInfo.GetDirectories()) subDirectory.Delete(true); // 当前目录下的全部文件夹
         }
         #endregion
 
-        #region 修改参数
-
-        private void CurrentPictureAngle_tbx_TextChanged(object sender, EventArgs e)
+        public static void RemoveAllControls(this Control control)
         {
-            originAngle = float.Parse(originPictureAngle_tbx.Text);
-        }
-
-        private void DeltaAngle_TextChanged(object sender, EventArgs e)
-        {
-            deltaAngle = float.Parse(deltaAngle_tbx.Text);
-        }
-
-        private void LastPictureAngle_tbx_TextChanged(object sender, EventArgs e)
-        {
-            finalAngle = float.Parse(finalPictureAngle_tbx.Text);
-        }
-        #endregion
-
-        #region 打开文件位置
-
-        private void OpenFileLocation_Click(object sender, EventArgs e)
-        {
-            var path = Environment.CurrentDirectory;
-            var info = new ProcessStartInfo(path)
+            while (control.Controls.Count > 0)
             {
-                UseShellExecute = true,
-            };
-            Process.Start(info);    // 打开指定文件夹，选中指定文件.
-        }
-        #endregion
-
-        #region 播放旋转图片
-        int index = 0;
-        private void PlayRotatePics_btn_Click(object sender, EventArgs e)
-        {
-            timer1.Start();
-            timer1.Interval = 10;
-        }
-        private void Timer1_Tick(object sender, EventArgs e)
-        {
-            playPics_picb.Image = (flowLayoutPanel1.Controls[index] as PictureBox).Image;
-            if (index < flowLayoutPanel1.Controls.Count - 1)
-            {
-                index++;
-            }
-            else
-            {
-                timer1.Stop();
-                index = 0;
+                Control ct = control.Controls[0];
+                control.Controls.Remove(ct);
+                ct.Dispose();
             }
         }
-        #endregion
+    }
+
+    /// <summary>
+    /// 字符串排序规则
+    /// </summary>
+    public class FileNameSort : IComparer
+    {
+        //调用DLL
+        [System.Runtime.InteropServices.DllImport("Shlwapi.dll", CharSet = CharSet.Unicode)]
+        private static extern int StrCmpLogicalW(string param1, string param2);
+
+
+        //前后文件名进行比较。Array.Sort将会使用此Compare方式执行排序。
+        public int Compare(object name1, object name2)
+        {
+            if (null == name1 && null == name2)
+            {
+                return 0;
+            }
+            if (null == name1)
+            {
+                return -1;
+            }
+            if (null == name2)
+            {
+                return 1;
+            }
+            return StrCmpLogicalW(name1.ToString(), name2.ToString());
+        }
     }
 }
