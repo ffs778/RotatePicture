@@ -87,6 +87,7 @@ namespace RotatePicture
             fs.Read(image, 0, filelength); //按字节流读取 
             System.Drawing.Image result = System.Drawing.Image.FromStream(fs);
             fs.Close();
+            fs.Dispose();
             Bitmap bit = new Bitmap(result);
             return bit;
         }
