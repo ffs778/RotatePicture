@@ -17,7 +17,7 @@
 mono_crash.*
 
 # Build results
-#[Dd]ebug/
+[Dd]ebug/
 [Dd]ebugPublic/
 [Rr]elease/
 [Rr]eleases/
@@ -27,11 +27,14 @@ x86/
 [Aa][Rr][Mm]/
 [Aa][Rr][Mm]64/
 bld/
-#[Bb]in/
+[Bb]in/
 [Oo]bj/
 [Oo]ut/
 [Ll]og/
 [Ll]ogs/
+
+#添加规则，不忽略bin目录下的文件
+!bin/
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
